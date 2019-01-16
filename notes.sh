@@ -1,0 +1,45 @@
+Highlight() {
+	echo -e "\e[92m$1\e[39m"
+}
+
+output() {
+	printf "%-30s %-30s" "$1" "$2" && echo ""
+}
+
+clear
+
+USER=$(whoami)
+echo -e "\e[94m   __\e[39m
+\e[94m  ( ->	\e[39m    Welcome, $USER 
+\e[94m  / )\	\e[39m    
+\e[94m <_/_/	\e[39m    
+"
+
+# Requires lm-sensors
+Highlight "PC Info"
+TEMP=$(sensors -u | grep "temp5_input" | sed 's/[^0-9.]*//g' | tail -c +2)
+TEMP=$(echo "$TEMP*1.8 + 32" | bc)
+TEMP=$(printf "%.0f" $TEMP)
+
+DATE=$(date +'%l:%M %P on %A, %B %d %Y')
+DATE=$(echo "$DATE" | tail -c +2)
+
+ROOT=$(df -h | grep "/dev/sda1" | awk '{print $5}')
+DATA=$(df -h | grep "/dev/sde1" | awk '{print $5}')
+MSFT=$(df -h | grep "/dev/sdb1" | awk '{print $5}')
+
+output "The current time is:" "$DATE"
+output "The current cpu temp is" "$TEMP° F"
+output "Drive useage:" "root: $ROOT data: $DATA msft: $MSFT"
+
+Highlight "Snoqualmie Pass Report: "
+echo "$(python3 wsdot.py)"
+
+Highlight "Meh: "
+echo "$(python3 meh.py)"
+
+Highlight "Weather Forecast"
+echo "$(python3 weather.py)"
+
+Highlight "Notes"
+cat text_notes
