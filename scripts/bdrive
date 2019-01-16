@@ -1,0 +1,107 @@
+#!/bin/bash
+
+# Instance variables
+DRIVE="/dev/sdd1"
+DIRECTORY="/media/brian/veracrypt"
+
+directoryExists() {
+	local __RETURN=$1
+	
+	if [ ! -d "$DIRECTORY" ]; then
+		local returnVal=0
+	else
+		local returnVal=1
+	fi
+
+	eval $__RETURN="'$returnVal'"
+}
+
+directoryIsEmpty() {
+	local __RETURN=$1
+	
+	if [ -d "$DIRECTORY" ]; then
+		if [ "$( ls -A $DIRECTORY)" ]; then
+			local returnVal=0
+		else
+			local returnVal=1
+		fi
+	fi
+
+	eval $__RETURN="'$returnVal'"
+}
+
+driveIsMounted() {
+	local __RETURN=$1
+
+	if lsblk | grep "veracrypt" > /dev/null 
+	then
+		local returnVal=0
+	else
+		local returnVal=1
+	fi
+
+	eval $__RETURN="'$returnVal'"
+}
+
+mountDrive() {
+	veracrypt -t -k "" --protect-hidden=no $DRIVE $DIRECTORY --pim=0
+}
+
+
+# Force admin password every time
+sudo -k && sudo echo -n ""
+
+driveIsMounted result
+if [ "$result" -eq "0" ]; then
+	echo "Drive is mounted, attempting to dismount."
+    sudo veracrypt -d $DRIVE
+    sudo rmdir $DIRECTORY
+
+    driveIsMounted result
+    if [ "$result" -eq "1" ]; then
+    	echo "Drive dismounted succesfully."
+    	directoryExists result
+    	if [ "$result" -eq "0" ]; then
+    		echo "Directory removed succesfully."
+    	else
+    		echo "Error: unable to remove directory."
+    	fi
+    else 
+    	echo "Error: unable to dismount drive."
+    fi
+else
+	directoryExists result
+	if [ "$result" -eq "1" ]; then
+		directoryIsEmpty result
+		if [ "$result" -eq "1" ]; then
+			echo "Attempting to mount drive..."
+			mountDrive
+			driveIsMounted result
+			if [ "$result" -eq "0" ]; then
+				echo "Drive mounted succesfully."
+			else
+				echo "Error: unable to mount drive."
+			fi
+		else
+			echo "Error: destination directory already contains data: "
+			FILES=$(find $DIRECTORY)
+			echo -e "\e[91m$FILES\e[39m"
+			echo "Manually remove the files and try again."
+		fi
+	else
+		sudo mkdir $DIRECTORY
+		directoryExists result
+		if [ "$result" -eq "1" ]; then
+			echo "Destination directory created."
+			mountDrive
+			driveIsMounted result
+			if [ "$result" -eq "0" ]; then
+				echo "Drive mounted succesfully."
+			else
+				echo "Error: unable to mount drive."
+			fi
+		else
+			echo "Error: unable to create destination directory."
+		fi
+	fi
+fi

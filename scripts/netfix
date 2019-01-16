@@ -1,0 +1,31 @@
+#!/bin/bash
+
+exec 2>/dev/null # Redirect stderr to null
+
+function test_packets_recieved()
+{
+    result=$(ping -c 1 "$1" | grep "transmitted" | cut -d',' -f2 | tail -c +2 | head -c 1)
+    echo "$result"
+}
+
+
+function test_connection() 
+{
+	echo -en "\e[33mTesting connection to $1: \e[39m"
+	packets=$(test_packets_recieved $1)
+	if (( packets > 0 )); then
+		echo -e "\e[32mConnected\e[39m";
+	else
+		echo -e "\e[91mNot connected\e[39m"
+	fi
+}
+
+test_connection "192.168.1.1"
+test_connection "8.8.8.8"
+test_connection "google.com"
+
+echo -n "Reset networking? (y/N): "
+read usrInput
+if [ "$usrInput" == "y" ]; then
+	sudo service networking restart
+fi

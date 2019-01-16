@@ -1,0 +1,4 @@
+#!/bin/bash
+
+kquitapp5 plasmashell > /dev/null 2>&1
+kstart plasmashell > /dev/null 2>&1

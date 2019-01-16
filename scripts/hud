@@ -1,3 +1,5 @@
+#!/bin/bash
+
 Highlight() {
 	echo -e "\e[92m$1\e[39m"
 }
@@ -33,13 +35,10 @@ output "The current cpu temp is" "$TEMP° F"
 output "Drive useage:" "root: $ROOT data: $DATA msft: $MSFT"
 
 Highlight "Snoqualmie Pass Report: "
-echo "$(python3 wsdot.py)"
+echo "$(python3 pyscripts/wsdot.py)"
 
 Highlight "Meh: "
-echo "$(python3 meh.py)"
+echo "$(python3 pyscripts/meh.py)"
 
 Highlight "Weather Forecast"
-echo "$(python3 weather.py)"
-
-Highlight "Notes"
-cat text_notes
+echo "$(python3 pyscripts/weather.py)"

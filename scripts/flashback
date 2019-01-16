@@ -1,0 +1,101 @@
+#!/bin/bash
+
+DATE=$(date +%m-%d-%y)
+BACKUPFOLDER=~/Documents/flashdrive-backups
+MEDIA=/media/brian
+DRIVE=/dev/sde1
+NAME=Hoopflash
+
+userInput() {
+	SIZE=$(du -hcs $MEDIA/$NAME | awk '{print $1}' | head -n 1)
+	echo "Would you like to backup drive '$NAME' containing $SIZE of data? (y/N)"
+	read question
+
+	if [ "$question" == "y" ]; then
+	        echo "Backing up drive."
+		backup
+	elif [ "$question" == "Y" ]; then
+	        echo "Backing up drive."
+		backup
+	else
+	        echo "No backup performed."
+	fi
+}
+
+backup() {
+  if [ ! -d $BACKUPFOLDER/$DATE ]; then
+    mkdir $BACKUPFOLDER/$DATE > /dev/null 2>&1
+    if [ ! -d $BACKUPFOLDER/$DATE ]; then
+      echo "Error creating backup folder"
+    else
+      echo "Attempting to back up files..."
+      rsync -r --info=progress2 $MEDIA/$NAME/* $BACKUPFOLDER/$DATE
+      if [ "$(ls -A $BACKUPFOLDER/$DATE)" ]; then
+        SIZE=$(du -hcs $BACKUPFOLDER/$DATE | awk '{print $1}' | head -n 1)
+        echo "Backup successful: $SIZE copied"
+      else
+        echo "Error, nothing to backup"
+      fi
+    fi
+  else
+    echo "Todays backup folder already exists, exiting without backup."
+  fi
+}
+
+mounted() {
+  mount | grep Hoopflash > /dev/null 2>&1
+  greprc=$?
+  if [[ $greprc -eq 0 ]] ; then
+      MOUNTED=1
+  else
+      if [[ $greprc -eq 1 ]] ; then
+          MOUNTED=0
+      else
+          MOUNTED=0
+      fi
+  fi
+}
+
+mountDrive() {
+  echo "Attempting to mount drive..."
+  sudo mkdir $MEDIA/$NAME  > /dev/null 2>&1
+  sudo mount $DRIVE $MEDIA/$NAME
+  mounted
+  if [ $MOUNTED == 1 ]; then
+    echo "Drive mounted."
+  fi
+}
+
+unMountDrive() {
+  sudo umount $DRIVE
+  sudo rmdir $MEDIA/$NAME*  > /dev/null 2>&1
+  mounted
+  if [ $MOUNTED == 0 ]; then
+    rmdir $MEDIA/$NAME*  > /dev/null 2>&1
+  fi
+}
+
+mounted
+if [ $MOUNTED == 0 ]; then
+  sudo rmdir $MEDIA/$NAME*  > /dev/null 2>&1
+  mountDrive
+  mounted
+  if [ $MOUNTED == 0 ]; then
+    echo "Error mounting drive, is it plugged in? "
+  else
+    userInput
+  fi
+elif [ -d $MEDIA/Hoopflash1 ]; then
+  echo "Folders screwed up, fixing"
+  unMountDrive
+  mountDrive
+  mounted
+  if [ $MOUNTED == 0 ]; then
+    echo "Error mounting drive (Folders screwed up)"
+  else
+    userInput
+  fi
+elif [ $MOUNTED == 1 ]; then
+  echo "Drive mounted properly"
+  userInput
+fi

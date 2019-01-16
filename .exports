@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Set nano as default editor
+export EDITOR="nano"
+
+# Setup PATH
+export PATH=/home/brian/.local/bin
+export PATH=$PATH:/usr/local/sbin
+export PATH=$PATH:/usr/local/bin
+export PATH=$PATH:/usr/sbin
+export PATH=$PATH:/usr/bin
+export PATH=$PATH:/sbin
+export PATH=$PATH:/bin
+export PATH=$PATH:/snap/bin
+export PATH=$PATH:/snap/bin
+export PATH=$PATH:/home/brian/admin/dotfiles/scripts/
+
+# Fix git log having no output
+export PAGER=less
+

@@ -1,0 +1,40 @@
+#!/bin/bash
+
+clear
+
+Highlight() {
+    echo -e "\e[92m$1\e[39m"
+}
+
+note() {
+    echo -e "\t\e[32m$1\e[39m$2"
+}
+
+echo "  _   _  ____ _______ ______  _____ "
+echo " | \ | |/ __ \__   __|  ____|/ ____|"
+echo " |  \| | |  | | | |  | |__  | (___  "
+echo " | . \` | |  | | | |  |  __|  \___ \ "
+echo " | |\  | |__| | | |  | |____ ____) |"
+echo -e " |_| \_|\____/  |_|  |______|_____/\n"
+
+Highlight "Linux system"
+note "vA && rA" "                       # Edit and reload .bashrc"
+note "ps -ax" "                         # List all processes"
+note "awk '{print $4,$5}'" "                # Print columns 4 and 5"
+note "fg" "                             # Return to background process"
+note "fd" "                             # cd to flash drive"
+note "ds" "                             # cd to downloads and list contents"
+note "~/.local/bin" "		       # Default install path"
+Highlight "Programs"
+note "dpkg -i file" "                   # Install using package manager"
+note "apts / aptg" "                    # Shorthand for apt install & apt search"
+note "lsblk" "                          # List block devies"
+Highlight "Scripts & functions"
+note "flashback" "                      # Backup /media/brian/Hoopflash"
+note "run" "                            # Start a program outside of console"
+note "copy source dest" "               # Copy files/directories with progress"
+note "scrtv / notv" "                   # Switch screen profile"
+Highlight "Compressed Files"
+note "extract" "                        # Uncompress .zip, .tar.gz, .tar.bz2"
+note "tar xvzf file.tar.gz" "           # Uncompress .tar.gz"
+note "tar xvjf file.tar.bz2" "          # Uncompress .tar.bz2"
