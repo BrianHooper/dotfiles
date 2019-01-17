@@ -1,0 +1,15 @@
+#!/usr/bin/python3.6
+
+import sys
+
+def print_square(inputstr):
+    split = inputstr.splitlines()
+    numchars = len(max(split, key=len))
+    print("#" * numchars + "####")
+    for line in split:
+        rem = numchars - len(line) + 1
+        print("# " + line + (' ' * rem) + '#')
+    print('#' * numchars + "####")
+
+if len(sys.argv) == 2:
+    print_square(sys.argv[1])
