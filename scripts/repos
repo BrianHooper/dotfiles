@@ -1,0 +1,37 @@
+#!/usr/bin/python3
+
+import requests
+
+headers = {"Authorization": "token <token>"}
+
+query = """
+{
+  viewer {
+    repositories(first: 100) {
+      edges {
+        node {
+          url
+        }
+      }
+    }
+  }
+}
+"""
+
+
+def run_query(query):
+    request = requests.post('https://api.github.com/graphql', json={'query': query}, headers=headers)
+    if request.status_code == 200:
+        return request.json()
+    else:
+        print("Error calling github API")
+        return None
+
+
+result = run_query(query)
+if result is not None:
+    try:
+        for repository in result["data"]["viewer"]["repositories"]["edges"]:
+            print(repository["node"]["url"])
+    except KeyError:
+        pass

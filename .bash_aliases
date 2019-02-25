@@ -47,7 +47,7 @@ alias notv="/home/brian/.screenlayout/default.sh"
 alias days="echo $(expr '(' $(date -d 2019/06/08 +%s) - $(date +%s) + 86399 ')' / 86400)"
 
 # Switch to school folder
-alias school="cd /home/brian/Documents/code/cwu_assignments"
+alias school="cd /home/brian/Documents/code/graduate_classwork"
 
 # Copy with progress
 alias copy="rsync -ah --progress"

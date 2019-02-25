@@ -9,9 +9,10 @@ case $- in
 esac
 
 # Load dotfiles
-if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
-fi
+for file in ~/.{bash_aliases,exports}; do
+    [ -r "$file" ] && source "$file"
+done
+unset file
 
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
@@ -27,10 +28,6 @@ HISTFILESIZE=2000
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
 shopt -s checkwinsize
-
-# If set, the pattern "**" used in a pathname expansion context will
-# match all files and zero or more directories and subdirectories.
-#shopt -s globstar
 
 # make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
@@ -62,6 +59,7 @@ if [ -n "$force_color_prompt" ]; then
 fi
 
 if [ "$color_prompt" = yes ]; then
+    # Default prompt
     # PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
     PS1='\[\033[01;34m\]\w\[\033[00m\] > ';
 else
@@ -89,7 +87,12 @@ if ! shopt -oq posix; then
   fi
 fi
 
-if [ -f ~/.exports ]; then
-    . ~/.exports
+
+
+if [ -f `which powerline-daemon` ]; then
+  powerline-daemon -q
+  POWERLINE_BASH_CONTINUATION=1
+  POWERLINE_BASH_SELECT=1
+  . /usr/share/powerline/bindings/bash/powerline.sh
 fi
 

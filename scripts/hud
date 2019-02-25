@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 
 pyscripts="/home/brian/admin/dotfiles/scripts/pyscripts"
 
@@ -14,12 +14,11 @@ clear
 
 USER=$(whoami)
 echo -e "\e[94m   __\e[39m
-\e[94m  ( ->	\e[39m    Welcome, $USER 
-\e[94m  / )\	\e[39m    
-\e[94m <_/_/	\e[39m    
+\e[94m  ( ->	\e[39m    Welcome, $USER
+\e[94m  / )\	\e[39m
+\e[94m <_/_/	\e[39m
 "
 
-# Requires lm-sensors
 Highlight "PC Info"
 TEMP=$(sensors -u | grep "temp5_input" | sed 's/[^0-9.]*//g' | tail -c +2)
 TEMP=$(echo "$TEMP*1.8 + 32" | bc)
