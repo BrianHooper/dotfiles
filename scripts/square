@@ -2,14 +2,23 @@
 
 import sys
 
-def print_square(inputstr):
+def print_square(inputstr, icon="#"):
+    if icon == "#":
+        start = "#"
+        end = "#"
+    elif icon == "/":
+        start = "//"
+        end = "//"
+
     split = inputstr.splitlines()
     numchars = len(max(split, key=len))
-    print("#" * numchars + "####")
+    print(start + (icon * (numchars - 2)) + (icon * 4) + end)
     for line in split:
         rem = numchars - len(line) + 1
-        print("# " + line + (' ' * rem) + '#')
-    print('#' * numchars + "####")
+        print(start + " " + line + (' ' * rem) + end)
+    print(start + (icon * (numchars - 2)) + (icon * 4) + end)
 
 if len(sys.argv) == 2:
     print_square(sys.argv[1])
+elif len(sys.argv) == 3:
+    print_square(sys.argv[2], icon="/")
