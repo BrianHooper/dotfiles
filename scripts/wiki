@@ -1,0 +1,16 @@
+#!/bin/zsh
+
+clear
+
+Highlight() {
+	echo -e "\e[92m$1\e[39m"
+}
+
+#!/bin/zsh
+
+pyscripts="$HOME/admin/dotfiles/scripts/pyscripts"
+
+
+Highlight "http://en.wikipedia.org"
+echo "$(python3 $pyscripts/wiki.py)" | less
+
