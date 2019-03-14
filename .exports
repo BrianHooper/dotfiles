@@ -19,3 +19,5 @@ export PATH=$PATH:$HOME/.cargo/bin
 # Fix git log having no output
 export PAGER=less
 
+# Automatically install a program when it is not found
+export COMMAND_NOT_FOUND_INSTALL_PROMPT=1

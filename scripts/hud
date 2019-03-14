@@ -3,7 +3,7 @@
 pyscripts="/home/brian/admin/dotfiles/scripts/pyscripts"
 
 Highlight() {
-	echo -e "\e[92m$1\e[39m"
+	echo -e "\e[1m\e[100m ~ \e[44m $1 \e[44m\e[100m ~ \e[90\e[0m"
 }
 
 output() {
@@ -30,15 +30,16 @@ DATE=$(echo "$DATE" | tail -c +2)
 ROOT=$(df -h | grep "/dev/sda1" | awk '{print $5}')
 DATA=$(df -h | grep "/dev/sde1" | awk '{print $5}')
 MSFT=$(df -h | grep "/dev/sdb1" | awk '{print $5}')
+KING=$(df -h | grep "/dev/sdc1" | awk '{print $5}')
 
 output "The current time is:" "$DATE"
 output "The current cpu temp is" "$TEMP° F"
-output "Drive useage:" "root: $ROOT data: $DATA msft: $MSFT"
+output "Drive useage:" "root: $ROOT data: $DATA msft: $MSFT king: $KING"
 
 Highlight "Snoqualmie Pass Report: "
 echo "$(python3 $pyscripts/wsdot.py)"
 
-Highlight "Meh: "
+Highlight "Meh: http://www.meh.com"
 echo "$(python3 $pyscripts/meh.py)"
 
 Highlight "Weather Forecast"

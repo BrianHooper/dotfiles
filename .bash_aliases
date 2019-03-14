@@ -11,7 +11,7 @@ alias -- -="cd -"
 alias cls='clear'
 
 # Set as executable
-alias chmox='chmod -x'
+alias chmox='sudo chmod -x'
 
 # Change directory to flash drive
 alias fd="cd /media/brian/Hoopflash"
@@ -53,7 +53,8 @@ alias school="cd /home/brian/Documents/code/graduate_classwork"
 alias copy="rsync -ah --progress"
 
 # List ls
-alias lll="ls -1"
+alias ll="ls -1"
+alias lll="ls -la"
 
 # Extract archives - use: extract <file>
 # Based on http://dotfiles.org/~pseup/.bashrc
@@ -134,3 +135,6 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
 
 # Lists each directory in the path
 alias path="echo "$PATH" | tr \":\" \"\n\""
+
+# Restart plasma shell to fix any weird desktop bugs
+alias fixdesk="kquitapp plasmashell && kstart plasmashell"

@@ -106,3 +106,4 @@ if [ -f `which powerline-daemon` ]; then
   . /usr/share/powerline/bindings/zsh/powerline.zsh
 fi
 
+. /etc/zsh_command_not_found
