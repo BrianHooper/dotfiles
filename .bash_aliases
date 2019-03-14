@@ -91,6 +91,8 @@ extract() {
     fi
 }
 
+
+
 # What is my external ip
 alias myip="curl https://api.ipify.org"
 
@@ -138,3 +140,16 @@ alias path="echo "$PATH" | tr \":\" \"\n\""
 
 # Restart plasma shell to fix any weird desktop bugs
 alias fixdesk="kquitapp plasmashell && kstart plasmashell"
+
+# Show a slideshow of all images in a folder and its subfolders
+function slide() {
+    feh $1 \
+     --scale-down \
+     --geometry 1920x760 \
+     --slideshow-delay $2 \
+     --recursive \
+     --randomize \
+     --auto-zoom \
+     --draw-filename \
+     --image-bg black
+}
