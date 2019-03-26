@@ -107,3 +107,8 @@ if [ -f `which powerline-daemon` ]; then
 fi
 
 . /etc/zsh_command_not_found
+
+
+if [ $TILIX_ID ] || [ $VTE_VERSION ]; then
+        source /etc/profile.d/vte.sh
+fi
