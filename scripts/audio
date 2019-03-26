@@ -1,0 +1,8 @@
+#!/bin/bash
+
+sound_profile=$(pactl info | grep -i "Default Source")
+if [[ $sound_profile == *"hdmi"* ]]; then
+    pactl set-card-profile alsa_card.pci-0000_00_1f.3 output:analog-stereo
+else
+    pactl set-card-profile alsa_card.pci-0000_00_1f.3 output:hdmi-stereo  
+fi
