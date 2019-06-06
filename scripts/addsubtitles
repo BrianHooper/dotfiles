@@ -1,24 +1,29 @@
 #!/usr/bin/python3.7
 
+#########################
+# addsubtitles          #
+# Adds subtitle streams #
+# to video files        #
+#                       #
+# Brian Hooper          #
+# 06/06/19              #
+#########################
+
 import os
 from shutil import which
 import sys
 from pathlib import Path
 
 
-def add_mkv(video_path, subs_path):
-    if which("mkvmerge") is None:
-        stderr("Error, either program mkvmerge is not installed or it does not exist in PATH", 1)
-
-    if not os.access(video_path.parent, os.W_OK):
-        stderr("Error, no write access to output folder, check permissions?", 1)
-
-    temp_path = video_path.parent / ("temp_" + video_path.name)
-    if os.path.exists(temp_path):
-        os.remove(temp_path)
-
-    command_string = "mkvmerge -o \"" + str(temp_path) + "\" \"" + str(video_path) + \
-                     "\" --language \"0:eng\" --track-name \"0:English\" \"" + str(subs_path) + "\""
+def execute_command(command_string, video_path, temp_path):
+    """
+    Executes the command to add the subtitle stream to the video, and removes the temporary file if the conversion
+    is successful
+    :param command_string: text command to run
+    :param video_path: path of video file
+    :param temp_path: path of temporary file
+    :return: None
+    """
     os.system(command_string)
     if not os.path.exists(temp_path):
         print("Error converting file", file=sys.stderr)
@@ -27,34 +32,115 @@ def add_mkv(video_path, subs_path):
     os.rename(temp_path, video_path)
 
 
-supported_file_types = {".mkv": add_mkv}
+def add_ffmpeg(video_path, temp_path, subs_path):
+    """
+    Adds subtitles to an mp4 file
+    :param video_path: path to video file
+    :param temp_path: path to temporary file
+    :param subs_path: path to subtitles file
+    :return: None
+    """
+    if which("ffmpeg") is None:
+        stderr("Error, either program ffmpeg is not installed or it does not exist in PATH", 1)
+
+    command_string = "ffmpeg -i \"" + str(video_path) + "\" -i \"" + str(subs_path) + \
+                     "\" -c copy -c:s mov_text \"" + str(temp_path) + "\""
+
+    execute_command(command_string, video_path, temp_path)
 
 
-def check_file_exists(file):
+def add_avi(video_path, temp_path, subs_path):
+    """
+    Adds subtitles to an avi file
+    :param video_path: path to video file
+    :param temp_path: path to temporary file
+    :param subs_path: path to subtitles file
+    :return: None
+    """
+    stderr("Error, .avi files are not currently supported.", 16)
+
+
+def add_mkv(video_path, temp_path, subs_path):
+    """
+    Adds subtitles to an mkv file
+    :param video_path: path to video file
+    :param temp_path: path to temporary file
+    :param subs_path: path to subtitles file
+    :return: None
+    """
+    if which("mkvmerge") is None:
+        stderr("Error, either program mkvmerge is not installed or it does not exist in PATH", 1)
+
+    command_string = "mkvmerge -o \"" + str(temp_path) + "\" \"" + str(video_path) + \
+                     "\" --language \"0:eng\" --track-name \"0:English\" \"" + str(subs_path) + "\""
+
+    execute_command(command_string, video_path, temp_path)
+
+
+supported_file_types = {".mkv": add_mkv, ".mp4": add_ffmpeg, ".avi": add_avi}
+
+
+def check_file_exists(file, halt=False):
+    """
+    Halts execution of the program if a file does not exist
+    :param file: path to file
+    :param halt: if true, program will halt on error
+    :return: True if the file exists
+    """
     if not os.path.exists(file):
-        stderr("Error: " + str(file.name) + " does not exist", 1)
+        if halt:
+            stderr("Error: " + str(file.name) + " does not exist", 1)
+        else:
+            return False
+    return True
 
 
 def stderr(error_msg, return_val):
+    """
+    Outputs an error message and halts the program
+    :param error_msg: error message
+    :param return_val: return value to exit program
+    :return: None
+    """
     print(error_msg, file=sys.stderr)
     exit(return_val)
 
 
 def add_subtitles(video_path, subs_path):
+    """
+    Adds the subtitle stream to a video file
+    :param video_path: path to video file
+    :param subs_path: path to subtitles file
+    :return: None
+    """
     video_path = Path(video_path)
     subs_path = Path(subs_path)
 
-    check_file_exists(video_path)
-    check_file_exists(subs_path)
+    if not check_file_exists(video_path) or not check_file_exists(subs_path):
+        print("Input file or subtitle file does not exist, skipping " + video_path.name, file=sys.stderr)
+        return
 
-    if not video_path.suffix in supported_file_types.keys() or not subs_path.suffix == '.srt':
+    if video_path.suffix not in supported_file_types.keys() or not subs_path.suffix == '.srt':
         print("Input is not a supported video type, skipping " + str(video_path.name), file=sys.stderr)
         return
 
-    supported_file_types[video_path.suffix](video_path, subs_path)
+    if not os.access(video_path.parent, os.W_OK):
+        stderr("Error, no write access to output folder, check permissions?", 1)
+
+    temp_path = video_path.parent / ("temp_" + video_path.name)
+    if os.path.exists(temp_path):
+        os.remove(temp_path)
+
+    supported_file_types[video_path.suffix](video_path, temp_path, subs_path)
 
 
 def read_text_file(path):
+    """
+    Attempts to read a text file into a list of lines
+    If the file is a binary file, the program will halt
+    :param path: path to file to read
+    :return: list of strings
+    """
     with open(path, 'r') as infile:
         try:
             paths = infile.read().splitlines()
@@ -64,6 +150,12 @@ def read_text_file(path):
 
 
 def read_list_inputs(video_path, subs_path):
+    """
+    Reads a list of videos and a list of subtitles, and attempts to add the correct subtitle stream to each
+    :param video_path: path to text file containing list of video paths
+    :param subs_path: path to text file containing list of srt paths
+    :return: None
+    """
     video_paths = read_text_file(video_path)
     subs_paths = read_text_file(subs_path)
     if len(video_paths) != len(subs_paths):
@@ -79,8 +171,8 @@ def main():
     video_path = Path(sys.argv[1])
     subs_path = Path(sys.argv[2])
 
-    check_file_exists(video_path)
-    check_file_exists(subs_path)
+    check_file_exists(video_path, halt=True)
+    check_file_exists(subs_path, halt=True)
 
     if video_path.suffix in supported_file_types and subs_path.suffix == ".srt":
         add_subtitles(video_path, subs_path)
