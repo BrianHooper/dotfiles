@@ -1,0 +1,92 @@
+#!/usr/bin/python3.7
+
+import os
+from shutil import which
+import sys
+from pathlib import Path
+
+
+def add_mkv(video_path, subs_path):
+    if which("mkvmerge") is None:
+        stderr("Error, either program mkvmerge is not installed or it does not exist in PATH", 1)
+
+    if not os.access(video_path.parent, os.W_OK):
+        stderr("Error, no write access to output folder, check permissions?", 1)
+
+    temp_path = video_path.parent / ("temp_" + video_path.name)
+    if os.path.exists(temp_path):
+        os.remove(temp_path)
+
+    command_string = "mkvmerge -o \"" + str(temp_path) + "\" \"" + str(video_path) + \
+                     "\" --language \"0:eng\" --track-name \"0:English\" \"" + str(subs_path) + "\""
+    os.system(command_string)
+    if not os.path.exists(temp_path):
+        print("Error converting file", file=sys.stderr)
+        return
+    os.remove(video_path)
+    os.rename(temp_path, video_path)
+
+
+supported_file_types = {".mkv": add_mkv}
+
+
+def check_file_exists(file):
+    if not os.path.exists(file):
+        stderr("Error: " + str(file.name) + " does not exist", 1)
+
+
+def stderr(error_msg, return_val):
+    print(error_msg, file=sys.stderr)
+    exit(return_val)
+
+
+def add_subtitles(video_path, subs_path):
+    video_path = Path(video_path)
+    subs_path = Path(subs_path)
+
+    check_file_exists(video_path)
+    check_file_exists(subs_path)
+
+    if not video_path.suffix in supported_file_types.keys() or not subs_path.suffix == '.srt':
+        print("Input is not a supported video type, skipping " + str(video_path.name), file=sys.stderr)
+        return
+
+    supported_file_types[video_path.suffix](video_path, subs_path)
+
+
+def read_text_file(path):
+    with open(path, 'r') as infile:
+        try:
+            paths = infile.read().splitlines()
+            return paths
+        except UnicodeDecodeError:
+            stderr("Error, one or more input files is not a text file", 1)
+
+
+def read_list_inputs(video_path, subs_path):
+    video_paths = read_text_file(video_path)
+    subs_paths = read_text_file(subs_path)
+    if len(video_paths) != len(subs_paths):
+        stderr("Error: number of video files does not match the number of srt files", 1)
+    for index in range(len(subs_paths)):
+        add_subtitles(video_paths[index], subs_paths[index])
+
+
+def main():
+    if len(sys.argv) != 3:
+        stderr("Error: Invalid number of parameters, useage " + sys.argv[0] + " <mkv files> <srt files>", 1)
+
+    video_path = Path(sys.argv[1])
+    subs_path = Path(sys.argv[2])
+
+    check_file_exists(video_path)
+    check_file_exists(subs_path)
+
+    if video_path.suffix in supported_file_types and subs_path.suffix == ".srt":
+        add_subtitles(video_path, subs_path)
+    else:
+        read_list_inputs(video_path, subs_path)
+
+
+if __name__ == "__main__":
+    main()
