@@ -27,5 +27,5 @@ test_connection "google.com"
 echo -n "Reset networking? (y/N): "
 read usrInput
 if [ "$usrInput" == "y" ]; then
-	sudo service networking restart
+	sudo service network-manager restart
 fi
