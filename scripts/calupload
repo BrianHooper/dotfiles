@@ -1,0 +1,58 @@
+#!/usr/bin/python3.7
+
+import sys
+import os
+from pathlib import Path
+from icalendar import Calendar, Event
+import vobject
+from datetime import datetime
+from shutil import which
+
+if which("gcalcli") is None:
+    print("Error: The program \"gcalcli\" is either not installed or configured in PATH", file=sys.stderr)
+    exit(1)
+
+if len(sys.argv) != 2 and len(sys.argv) != 3:
+    print('Invalid number of parameters', file=sys.stderr)
+    exit(1)
+
+default_calendar = "Brian & Jodi"
+if len(sys.argv) == 3:
+    default_calendar = sys.argv[2]
+
+path = Path(sys.argv[1])
+modpath = path.parent / ("mod_" + path.name)
+
+if not os.path.exists(path):
+    print('Input file ' + str(path) + ' does not exist', file=sys.stderr)
+    exit(1)
+
+with open(path, 'r') as infile:
+    event = infile.readlines()
+
+
+with open(path, 'r') as infile:
+    gcal = infile.read()
+cal = vobject.readOne(gcal)
+print("Uploading event: " + cal.vevent.summary.valueRepr() + " to calendar \"" + default_calendar + "\"")
+event_date = cal.vevent.dtstart.value.strftime("%m/%d/%Y, %I:%M %p")
+print(event_date)
+
+eventCopy = []
+for index, line in enumerate(event):
+    split = line.split(';')
+    if len(split) == 0 or split[0] != 'ATTENDEE':
+        eventCopy.append(line)
+
+
+with open(modpath, 'w') as outfile:
+    outfile.writelines(eventCopy)
+
+command_str = "gcalcli import " + str(modpath) + " --calendar " + "\"" + default_calendar + "\""
+command_return = os.system(command_str)
+os.remove(modpath)
+
+choice = input("Remove ICS file? y/N: ")
+if choice.lower() == "y":
+    print("Removing " + str(path))
+    os.remove(path)
