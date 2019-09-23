@@ -9,6 +9,7 @@ from shutil import rmtree
 from sys import stdout, stderr
 from os.path import exists
 from subprocess import Popen, PIPE
+import re
 
 
 def __decode_pipe__(pipe):
@@ -101,3 +102,18 @@ def progress_bar(percent, width=50):
         endl = ""
 
     print("\rProgress: %7.2f%% %s%s" % (percent * 100, pounds, dashes), end=endl)
+    
+def multi_split(delimiters, to_split):
+    keys = {
+        " ": "[\s]+",
+        ",": "[,]+",
+        "\t": "[\t]+",
+    }
+
+    for index, value in enumerate(delimiters):
+        if value in keys:
+            delimiters[index] = keys[value]
+        else:
+            delimiters[index] = "[" + value + "]+"
+    pattern = re.compile("|".join(delimiters))
+    return pattern.split(to_split)
