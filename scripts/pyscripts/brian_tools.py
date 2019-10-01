@@ -9,6 +9,8 @@ from shutil import rmtree
 from sys import stdout, stderr
 from os.path import exists
 from subprocess import Popen, PIPE
+from collections import deque
+import numpy as np
 
 
 def __decode_pipe__(pipe):
@@ -61,7 +63,7 @@ def dev_clean(root_path, path):
     The location of the folder should be the absolute path, split into 
     the parent folder and the name of the folder, for example:
 
-    dev_clean(r"C:\users\v-brhoop\Downloads", "example_folder")
+    dev_clean(r"C:/users/v-brhoop/Downloads", "example_folder")
 
     """
 
@@ -101,3 +103,42 @@ def progress_bar(percent, width=50):
         endl = ""
 
     print("\rProgress: %7.2f%% %s%s" % (percent * 100, pounds, dashes), end=endl)
+
+
+class AverageTime:
+    def __init__(self, max_items=10):
+        self.times = deque()
+        self.max_items = max_items
+
+    def update(self, time):
+        if len(self.times) >= 9:
+            self.times.popleft()
+        self.times.append(time)
+        return np.average(self.times)
+
+    def estimate(self, time, remaining_items):
+        avgtime = self.update(time)
+        remaining_time = avgtime * remaining_items
+
+        if remaining_time < 10:
+            return "{:.2f} seconds remain".format(remaining_time)
+        elif remaining_time < 60:
+            return "{:d} seconds remain".format(int(remaining_time))
+        elif remaining_time < 3600:
+            remaining_time = int(remaining_time)
+            minutes = remaining_time // 60
+            seconds = remaining_time % 60
+            return "{:d} min and {:d} sec remain".format(minutes, seconds)
+        else:
+            remaining_time = int(remaining_time)
+            hours = remaining_time // 3600
+            remaining_time = remaining_time % 3600
+            minutes = remaining_time // 60
+            seconds = remaining_time % 60
+            
+            hour_str = "hours" if hours > 1 else "hour"
+            return "{:d} {:s}, {:d} min, and {:d} sec remain".format(hours, hour_str, minutes, seconds)
+
+
+def divide_chunks(data, chunk_size):
+    return [data[i * chunk_size:(i + 1) * chunk_size] for i in range((len(data) + chunk_size - 1) // chunk_size )]

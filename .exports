@@ -15,6 +15,7 @@ export PATH=$PATH:/snap/bin
 export PATH=$PATH:/snap/bin
 export PATH=$PATH:$HOME/admin/dotfiles/scripts/
 export PATH=$PATH:$HOME/.cargo/bin
+export PATH=$PATH:/usr/games
 
 # Fix git log having no output
 export PAGER=less

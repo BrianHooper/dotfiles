@@ -52,10 +52,6 @@ alias school="cd /home/brian/Documents/code/graduate_classwork"
 # Copy with progress
 alias copy="rsync -ah --progress"
 
-# List ls
-alias ll="ls -1"
-alias lll="ls -la"
-
 # Extract archives - use: extract <file>
 # Based on http://dotfiles.org/~pseup/.bashrc
 extract() {
@@ -94,7 +90,7 @@ extract() {
 
 
 # What is my external ip
-alias myip="curl https://api.ipify.org"
+#alias myip="curl https://api.ipify.org"
 
 # Show file size
 alias fs="stat -c \"%s bytes\""
@@ -153,3 +149,14 @@ function slide() {
      --draw-filename \
      --image-bg black
 }
+
+alias chex="cd /home/brian/Downloads/CheXpert-v1.0-small/"
+
+function runpy() {
+	python3 $1 2>&1 | tee $2
+}
+
+alias l="lsd -1"
+alias ll="lsd -A"
+alias lll="lsd -d1 */"
+alias llll="lsd -al"
