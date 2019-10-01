@@ -11,6 +11,7 @@ from os.path import exists
 from subprocess import Popen, PIPE
 from collections import deque
 import numpy as np
+import re
 
 
 def __decode_pipe__(pipe):
@@ -135,10 +136,25 @@ class AverageTime:
             remaining_time = remaining_time % 3600
             minutes = remaining_time // 60
             seconds = remaining_time % 60
-            
+
             hour_str = "hours" if hours > 1 else "hour"
             return "{:d} {:s}, {:d} min, and {:d} sec remain".format(hours, hour_str, minutes, seconds)
 
 
 def divide_chunks(data, chunk_size):
     return [data[i * chunk_size:(i + 1) * chunk_size] for i in range((len(data) + chunk_size - 1) // chunk_size )]
+
+def multi_split(delimiters, to_split):
+    keys = {
+        " ": "[\s]+",
+        ",": "[,]+",
+        "\t": "[\t]+",
+    }
+
+    for index, value in enumerate(delimiters):
+        if value in keys:
+            delimiters[index] = keys[value]
+        else:
+            delimiters[index] = "[" + value + "]+"
+    pattern = re.compile("|".join(delimiters))
+    return pattern.split(to_split)
