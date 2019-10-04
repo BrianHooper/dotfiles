@@ -160,3 +160,6 @@ alias l="lsd -1"
 alias ll="lsd -A"
 alias lll="lsd -d1 */"
 alias llll="lsd -al"
+
+alias hooplogin="ssh brian@192.168.1.64"
+alias thesis="cd /home/brian/Documents/thesis"

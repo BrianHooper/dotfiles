@@ -22,3 +22,5 @@ export PAGER=less
 
 # Automatically install a program when it is not found
 export COMMAND_NOT_FOUND_INSTALL_PROMPT=1
+
+export PYTHONPATH="${PYTHONPATH}:/home/brian/Documents/thesis"
