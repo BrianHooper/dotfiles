@@ -16,6 +16,7 @@ export PATH=$PATH:/snap/bin
 export PATH=$PATH:$HOME/admin/dotfiles/scripts/
 export PATH=$PATH:$HOME/.cargo/bin
 export PATH=$PATH:/usr/games
+export PATH=$PATH:/usr/local/texlive/2020/bin/x86_64-linux
 
 # Fix git log having no output
 export PAGER=less

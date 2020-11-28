@@ -7,7 +7,7 @@ Highlight() {
 }
 
 note() {
-    echo -e "\t\e[32m$1\e[39m$2"
+    echo -e "  \e[32m$1\e[39m$2"
 }
 
 echo "  _   _  ____ _______ ______  _____ "
@@ -24,7 +24,8 @@ note "awk '{print $4,$5}'" "                # Print columns 4 and 5"
 note "fg" "                             # Return to background process"
 note "fd" "                             # cd to flash drive"
 note "ds" "                             # cd to downloads and list contents"
-note "~/.local/bin" "		       # Default install path"
+note "~/.local/bin" "                   # Default install path"
+note "du -sh" "                         # Size of a directory"
 Highlight "Programs"
 note "dpkg -i file" "                   # Install using package manager"
 note "apts / aptg" "                    # Shorthand for apt install & apt search"
@@ -32,10 +33,12 @@ note "lsblk" "                          # List block devies"
 note "inxi -Fx" "                       # Show hardware info"
 Highlight "Scripts & functions"
 note "flashback" "                      # Backup /media/brian/Hoopflash"
-note "run" "                            # Start a program outside of console"
-note "copy source dest" "               # Copy files/directories with progress"
+note "run" "                                      # Start a program outside of console"
+note "copy source dest" "                         # Copy files/directories with progress"
+note "sudo rsync -r --info=progress2 source dest" ""
 note "scrtv / notv" "                   # Switch screen profile"
 Highlight "Compressed Files"
 note "extract" "                        # Uncompress .zip, .tar.gz, .tar.bz2"
 note "tar xvzf file.tar.gz" "           # Uncompress .tar.gz"
 note "tar xvjf file.tar.bz2" "          # Uncompress .tar.bz2"
+note "nano /etc/fstab" "                # Set mount drives on boot"

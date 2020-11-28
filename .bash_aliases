@@ -50,7 +50,7 @@ alias days="echo $(expr '(' $(date -d 2019/06/08 +%s) - $(date +%s) + 86399 ')' 
 alias school="cd /home/brian/Documents/code/graduate_classwork"
 
 # Copy with progress
-alias copy="rsync -ah --progress"
+alias copy="sudo rsync -ah  --no-o --no-g --ignore-existing --info=progress2"
 
 # Extract archives - use: extract <file>
 # Based on http://dotfiles.org/~pseup/.bashrc
@@ -138,17 +138,8 @@ alias path="echo "$PATH" | tr \":\" \"\n\""
 alias fixdesk="kquitapp plasmashell && kstart plasmashell"
 
 # Show a slideshow of all images in a folder and its subfolders
-function slide() {
-    feh $1 \
-     --scale-down \
-     --geometry 1920x760 \
-     --slideshow-delay $2 \
-     --recursive \
-     --randomize \
-     --auto-zoom \
-     --draw-filename \
-     --image-bg black
-}
+alias slide="feh . --scale-down --geometry 1920x760 --slideshow-delay 10 --recursive --randomize --auto-zoom --draw-filename --image-bg black"
+
 
 alias chex="cd /home/brian/Downloads/CheXpert-v1.0-small/"
 
@@ -162,4 +153,17 @@ alias lll="lsd -d1 */"
 alias llll="lsd -al"
 
 alias hooplogin="ssh brian@192.168.1.64"
-alias thesis="cd /home/brian/Documents/thesis"
+alias thesis="barracuda && cd /home/brian/Documents/thesis"
+
+#alias drives="lsblk -f -o PATH,FSTYPE,LABEL,SIZE,FSAVAIL,FSUSE%,MODEL,MOUNTPOINT /dev/[s,m]d*[0-9] | grep -v -P '(sdb2)|(sdc1)|(sdc3)'"
+#alias partitions = "lsblk -f -o PATH,FSTYPE,LABEL,SIZE,FSAVAIL,FSUSE%,MOUNTPOINT /dev/sd* | sort -r | uniq | grep -vP '(_data[1,\s])|(sdc[1,3])|(sd[a-z]\s)'"
+
+alias aliases="cat ~/.bash_aliases | grep -P '^alias'"
+alias peek="head -n 10"
+
+function drives() {
+    echo -e "\e[34mDRIVES\e[39m"
+    lsblk -f -o PATH,SIZE,MODEL,FSTYPE /dev/sd* | grep -vP '(_data[0-9])|(sd[a-z][0-9])' | awk '!x[$0]++'
+    echo -e "\e[32mPARTITIONS\e[39m"
+    lsblk -o PATH,FSTYPE,LABEL,SIZE,FSAVAIL,FSUSED,FSUSE%,MOUNTPOINT | grep -vP "(loop[0-9]+)|(sd[a-z]\s)|(sdc[1,3])|(_data[1,\s])|(sr0)" | awk '!x[$0]++'
+}

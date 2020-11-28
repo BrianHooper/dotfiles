@@ -2,7 +2,7 @@
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-  export ZSH="/home/brian/.oh-my-zsh"
+ export ZSH="/home/brian/.oh-my-zsh"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
@@ -99,6 +99,7 @@ for file in ~/.{bash_aliases,exports}; do
 done
 unset file
 
+
 if [ -f `which powerline-daemon` ]; then
   powerline-daemon -q
   POWERLINE_BASH_CONTINUATION=1
@@ -109,9 +110,9 @@ fi
 . /etc/zsh_command_not_found
 
 
-if [ $TILIX_ID ] || [ $VTE_VERSION ]; then
-        source /etc/profile.d/vte.sh
-fi
+#if [ $TILIX_ID ] || [ $VTE_VERSION ]; then
+#        source /etc/profile.d/vte.sh
+#fi
 
 gcsfuse() {
  /usr/bin/gcsfuse "$@"
